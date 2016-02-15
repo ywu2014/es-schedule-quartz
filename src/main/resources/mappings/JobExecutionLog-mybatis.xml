@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.jiangnan.es.schedule.dao.JobExecutionLogDao">
+    <!--新增-->
+    <insert id="save" parameterType="JobExecutionLog" useGeneratedKeys="true" keyProperty="id">
+    	INSERT INTO JOB_EXECUTION_LOG (ID, JOBTASK_ID, STATUS, STARTTIME, CONTEXT) 
+    		VALUES (#{id}, #{jobTask.id}, #{status, typeHandler = org.apache.ibatis.type.EnumOrdinalTypeHandler}, #{startTime}, #{context, typeHandler = com.jiangnan.es.schedule.handler.ContextTypeHandler})
+    </insert>
+    
+    <!--根据ID获取-->
+    <select id="get" parameterType="int" resultMap="jobexecutionlogMap">
+    	SELECT ID, JOBTASK_ID, STATUS, STARTTIME, FINISHEDTIME, CONTEXT FROM JOB_EXECUTION_LOG WHERE ID = #{param2}
+    </select>
+    
+    <!--更新-->
+    <update id="update" parameterType="JobExecutionLog">
+		UPDATE JOB_EXECUTION_LOG 
+        <set>
+           	STATUS = #{status, typeHandler = org.apache.ibatis.type.EnumOrdinalTypeHandler},
+           	FINISHEDTIME = #{finishedTime},
+            <if test="context != null">
+            	CONTEXT = #{context, typeHandler = com.jiangnan.es.schedule.handler.ContextTypeHandler}
+            </if>
+        </set>
+		 WHERE ID = #{id}
+    </update>
+    
+    <!--列表-->
+    <select id="list" resultMap="jobexecutionlogWrapperMap">
+    	SELECT JOB_EXECUTION_LOG.ID, JOBTASK.BEAN_ID, JOBTASK.METHOD_NAME, JOBTASK.GROUP, JOBTASK.DESCRIPTION, JOB_EXECUTION_LOG.STARTTIME, JOB_EXECUTION_LOG.FINISHEDTIME, JOB_EXECUTION_LOG.STATUS FROM JOB_EXECUTION_LOG 
+		LEFT JOIN JOBTASK ON JOBTASK.ID = JOB_EXECUTION_LOG.JOBTASK_ID 
+        <where>
+            	JOB_EXECUTION_LOG.JOBTASK_ID = #{id} 
+            <if test="status != null">
+            	AND STATUS = #{status, typeHandler = org.apache.ibatis.type.EnumOrdinalTypeHandler}
+            </if>
+            <if test="startBeginTime != null">
+            	AND JOB_EXECUTION_LOG.STARTTIME &gt;= #{startBeginTime}
+            </if>
+            <if test="endBeginTime != null">
+            	AND JOB_EXECUTION_LOG.STARTTIME &lt; #{endBeginTime}
+            </if>
+        </where>
+    </select>
+    
+    <!--删除-->
+    <delete id="remove" parameterType="int">
+    	DELETE FROM JOB_EXECUTION_LOG WHERE ID = #{param2}
+    </delete>
+   
+    <!--结果映射器-->
+    <resultMap id="jobexecutionlogMap" type="JobExecutionLog">
+        <id column="ID" property="id"/>
+        <result column="JOBTASK_ID" property="jobTask.id"/>
+        <result column="STATUS" property="status" typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
+        <result column="STARTTIME" property="startTime"/>
+        <result column="FINISHEDTIME" property="finishedTime"/>
+        <result column="CONTEXT" property="context" typeHandler="com.jiangnan.es.schedule.handler.ContextTypeHandler"/>
+    </resultMap>
+    
+    <resultMap id="jobexecutionlogWrapperMap" type="JobExecutionLogWrapper">
+        <id column="ID" property="id"/>
+        <result column="STATUS" property="status" typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
+        <result column="STARTTIME" property="startTime"/>
+        <result column="FINISHEDTIME" property="finishedTime"/>
+        <result column="CONTEXT" property="context" typeHandler="com.jiangnan.es.schedule.handler.ContextTypeHandler"/>
+    	
+    	<result column="BEAN_ID" property="beanId"/>
+        <result column="METHOD_NAME" property="methodName"/>
+        <result column="GROUP" property="group"/>
+        <result column="DESCRIPTION" property="description"/>
+    </resultMap>
+</mapper>

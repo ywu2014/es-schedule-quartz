@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.jiangnan.es.schedule.dao.JobTaskDao">
+    <!--新增-->
+    <insert id="save" parameterType="JobTask" useGeneratedKeys="true" keyProperty="id">
+    	INSERT INTO JOBTASK (ID, BEAN_ID, METHOD_NAME, `GROUP`, EXPRESSION, DESCRIPTION, STATUS, CREATETIME, LASTUPDATE) 
+    		VALUES (#{id}, #{beanId}, #{methodName}, #{group}, #{expression}, #{description}, #{status, typeHandler = org.apache.ibatis.type.EnumOrdinalTypeHandler}, #{createTime}, #{lastUpdate})
+    </insert>
+    
+    <!--根据ID获取-->
+    <select id="get" parameterType="int" resultMap="jobtaskMap">
+    	SELECT ID, BEAN_ID, METHOD_NAME, `GROUP`, EXPRESSION, DESCRIPTION, STATUS, CREATETIME, LASTUPDATE FROM JOBTASK WHERE ID = #{param2}
+    </select>
+   
+    <!--更新-->
+    <update id="update" parameterType="JobTask">
+		UPDATE JOBTASK 
+        <set>
+            <if test="beanId != null and beanId != ''">
+            	BEAN_ID = #{beanId},
+            </if>
+            <if test="methodName != null and methodName != ''">
+            	METHOD_NAME = #{methodName},
+            </if>
+            <if test="expression != null and expression != ''">
+            	EXPRESSION = #{expression},
+            </if>
+            <if test="description != null and description != ''">
+            	DESCRIPTION = #{description},
+            </if>
+            <if test="status != null">
+            	STATUS = #{status, typeHandler = org.apache.ibatis.type.EnumOrdinalTypeHandler},
+            </if>
+            <if test="lastUpdate != null">
+            	LASTUPDATE = #{lastUpdate}
+            </if>
+        </set>
+		 WHERE ID = #{id}
+    </update>
+   
+    <!--列表-->
+    <select id="list" resultMap="jobtaskMap">
+    	SELECT ID, BEAN_ID, METHOD_NAME, `GROUP`, EXPRESSION, DESCRIPTION, STATUS, CREATETIME, LASTUPDATE FROM JOBTASK 
+        <where>
+            <if test="beanId != null and beanId != ''">BEANID = #{BEAN_ID}</if>
+            <if test="methodName != null and methodName != ''">AND METHOD_NAME = #{methodName}</if>
+            <if test="group != null and group != ''">AND `GROUP` = #{group}</if>
+            <if test="status != null">AND STATUS = #{status, typeHandler = org.apache.ibatis.type.EnumOrdinalTypeHandler}</if>
+        </where>
+    </select>
+   
+    <!--删除-->
+    <delete id="remove" parameterType="int">
+    	DELETE FROM JOBTASK WHERE ID = #{param2}
+    </delete>
+   
+    <!--结果映射器-->
+    <resultMap id="jobtaskMap" type="JobTask">
+        <id column="ID" property="id"/>
+        <result column="BEAN_ID" property="beanId"/>
+        <result column="METHOD_NAME" property="methodName"/>
+        <result column="GROUP" property="group"/>
+        <result column="EXPRESSION" property="expression"/>
+        <result column="DESCRIPTION" property="description"/>
+        <result column="STATUS" property="status" typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
+        <result column="CREATETIME" property="createTime"/>
+        <result column="LASTUPDATE" property="lastUpdate"/>
+    </resultMap>
+</mapper>
