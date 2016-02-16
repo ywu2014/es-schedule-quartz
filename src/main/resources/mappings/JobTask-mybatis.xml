@@ -4,13 +4,13 @@
 <mapper namespace="com.jiangnan.es.schedule.dao.JobTaskDao">
     <!--新增-->
     <insert id="save" parameterType="JobTask" useGeneratedKeys="true" keyProperty="id">
-    	INSERT INTO JOBTASK (ID, BEAN_ID, METHOD_NAME, `GROUP`, EXPRESSION, DESCRIPTION, STATUS, CREATETIME, LASTUPDATE) 
-    		VALUES (#{id}, #{beanId}, #{methodName}, #{group}, #{expression}, #{description}, #{status, typeHandler = org.apache.ibatis.type.EnumOrdinalTypeHandler}, #{createTime}, #{lastUpdate})
+    	INSERT INTO JOBTASK (ID, BEAN_ID, METHOD_NAME, `GROUP`, EXPRESSION, DESCRIPTION, STATUS, CREATETIME, LASTUPDATE, PARAMS) 
+    		VALUES (#{id}, #{beanId}, #{methodName}, #{group}, #{expression}, #{description}, #{status, typeHandler = org.apache.ibatis.type.EnumOrdinalTypeHandler}, #{createTime}, #{lastUpdate}, #{params})
     </insert>
     
     <!--根据ID获取-->
     <select id="get" parameterType="int" resultMap="jobtaskMap">
-    	SELECT ID, BEAN_ID, METHOD_NAME, `GROUP`, EXPRESSION, DESCRIPTION, STATUS, CREATETIME, LASTUPDATE FROM JOBTASK WHERE ID = #{param2}
+    	SELECT ID, BEAN_ID, METHOD_NAME, `GROUP`, EXPRESSION, DESCRIPTION, STATUS, CREATETIME, LASTUPDATE, PARAMS FROM JOBTASK WHERE ID = #{param2}
     </select>
    
     <!--更新-->
@@ -25,6 +25,9 @@
             </if>
             <if test="expression != null and expression != ''">
             	EXPRESSION = #{expression},
+            </if>
+            <if test="params != null and params != ''">
+            	PARAMS = #{params},
             </if>
             <if test="description != null and description != ''">
             	DESCRIPTION = #{description},
@@ -41,7 +44,7 @@
    
     <!--列表-->
     <select id="list" resultMap="jobtaskMap">
-    	SELECT ID, BEAN_ID, METHOD_NAME, `GROUP`, EXPRESSION, DESCRIPTION, STATUS, CREATETIME, LASTUPDATE FROM JOBTASK 
+    	SELECT ID, BEAN_ID, METHOD_NAME, `GROUP`, EXPRESSION, DESCRIPTION, STATUS, CREATETIME, LASTUPDATE, PARAMS FROM JOBTASK 
         <where>
             <if test="beanId != null and beanId != ''">BEANID = #{BEAN_ID}</if>
             <if test="methodName != null and methodName != ''">AND METHOD_NAME = #{methodName}</if>
@@ -62,6 +65,7 @@
         <result column="METHOD_NAME" property="methodName"/>
         <result column="GROUP" property="group"/>
         <result column="EXPRESSION" property="expression"/>
+        <result column="PARAMS" property="params"/>
         <result column="DESCRIPTION" property="description"/>
         <result column="STATUS" property="status" typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
         <result column="CREATETIME" property="createTime"/>

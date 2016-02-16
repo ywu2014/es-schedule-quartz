@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.jiangnan.es.schedule.JobConstants;
 import com.jiangnan.es.schedule.entity.JobExecutionLog;
+import com.jiangnan.es.util.JsonUtils;
 
 /**
  * @description TODO
@@ -34,11 +35,12 @@ public class TestJob {
 	public void testWithParam(Map<String, Object> params) {
 		JobExecutionLog executionLog = (JobExecutionLog)params.get(JobConstants.PARAM_EXECUTION_LOG);
 		executionLog.addContext("xxx", "job with param");
-		System.out.println("test job");
+		System.out.println("params:" + JsonUtils.object2JsonString(params));
+		System.out.println("test job with param");
 	}
 	
 	public void testWithException() {
-		System.out.println("test job");
+		System.out.println("test job with exception");
 		throw new RuntimeException("test");
 	}
 }

@@ -21,4 +21,8 @@ public final class JobConstants {
 	public static final String PARAM_METHOD_NAME = "methodName";
 	/**调度执行日志*/
 	public static final String PARAM_EXECUTION_LOG = "executionLog";
+	
+	public static final String PARAM_JOB_PARAMS_SPLIT = ";";
+	
+	public static final String PARAM_JOB_PARAM_SPLIT = "=";
 }

@@ -6,8 +6,6 @@
 package com.jiangnan.es.schedule.entity;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import com.jiangnan.es.common.entity.BaseEntity;
 
@@ -44,7 +42,9 @@ public class JobTask extends BaseEntity<Integer> {
 	/**上次运行时间*/
 	private Date previoustExecuteTime;
 	/**调度参数*/
-	private Map<String, String> params = new HashMap<String, String>();
+	//private Map<String, String> params = new HashMap<String, String>();
+	/**调度参数,先采用简单的string格式的,格式:paramName1=value1;paramName2=value2*/
+	private String params;
 
 	public Integer getId() {
 		return this.id;
@@ -102,7 +102,7 @@ public class JobTask extends BaseEntity<Integer> {
 		this.id = id;
 	}
 
-	public Map<String, String> getParams() {
+	/*public Map<String, String> getParams() {
 		return params;
 	}
 
@@ -116,7 +116,7 @@ public class JobTask extends BaseEntity<Integer> {
 	
 	public void addParam(String name, String value) {
 		this.params.put(name, value);
-	}
+	}*/
 
 	public Date getNextExecuteTime() {
 		return nextExecuteTime;
@@ -156,6 +156,14 @@ public class JobTask extends BaseEntity<Integer> {
 
 	public void setPrevioustExecuteTime(Date previoustExecuteTime) {
 		this.previoustExecuteTime = previoustExecuteTime;
+	}
+
+	public String getParams() {
+		return params;
+	}
+
+	public void setParams(String params) {
+		this.params = params;
 	}
 	
 }

@@ -38,6 +38,7 @@ import com.jiangnan.es.schedule.entity.JobTask;
 import com.jiangnan.es.schedule.job.QuartzJobFactory;
 import com.jiangnan.es.schedule.service.ScheduleService;
 import com.jiangnan.es.util.CollectionUtils;
+import com.jiangnan.es.util.StringUtils;
 
 /**
  * @description 调度业务实现类
@@ -96,12 +97,9 @@ public class ScheduleServiceImpl extends MybatisBaseServiceSupport<JobTask> impl
 			jobDataMap.put(JobConstants.PARAM_METHOD_NAME, jobTask.getMethodName());
 			
 			//设置调度参数
-			Map<String, String> params = jobTask.getParams();
-			if (!CollectionUtils.isEmpty(params)) {
-				for(String paramName : params.keySet()){
-					jobDataMap.put(paramName, params.get(paramName));
-				}
-			}
+			String params = jobTask.getParams();
+			addJobParam(jobDataMap, params);
+			
 			clusterScheduler.scheduleJob(jobDetail, trigger);
 		} else {
 			//trigger已存在,更新
@@ -114,6 +112,23 @@ public class ScheduleServiceImpl extends MybatisBaseServiceSupport<JobTask> impl
 							.build();
 			//按新的trigger重新设置job执行
 			clusterScheduler.rescheduleJob(triggerKey, trigger);
+		}
+	}
+	
+	/**
+	 * 添加调度参数
+	 * @param jobDataMap
+	 * @param params
+	 */
+	private void addJobParam(JobDataMap jobDataMap, String params) {
+		if (StringUtils.hasText(params)) {
+			String[] paramArray = params.split(JobConstants.PARAM_JOB_PARAMS_SPLIT);
+			for (String paramValue : paramArray) {
+				String[] pv = paramValue.split(JobConstants.PARAM_JOB_PARAM_SPLIT);
+				String paramName = pv[0].trim();
+				String pValue = pv[1].trim();
+				jobDataMap.put(paramName, pValue);
+			}
 		}
 	}
 	
